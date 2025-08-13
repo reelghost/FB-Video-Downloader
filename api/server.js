@@ -1,12 +1,13 @@
 const express = require('express');
 const Facebook = require('facebook-dl');
 const axios = require('axios');
+const serverless = require('serverless-http');
+
 const app = express();
-const PORT = 3000;
 const api = new Facebook();
 
 app.set('json spaces', 2);
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
 
 app.get('/fbdown', async (req, res) => {
     const { url } = req.query;
@@ -30,20 +31,17 @@ app.get('/download', async (req, res) => {
     }
     
     try {
-        // Get the video as a stream
         const response = await axios({
             method: 'GET',
             url: url,
             responseType: 'stream'
         });
         
-        // Set content disposition and type headers
         const videoFilename = filename || 'facebook_video';
         const uniqueId = Date.now();
         res.setHeader('Content-Disposition', `attachment; filename="${videoFilename}_${uniqueId}.mp4"`);
         res.setHeader('Content-Type', 'video/mp4');
         
-        // Pipe the video stream to the response
         response.data.pipe(res);
     } catch (error) {
         console.error('Download error:', error.message);
@@ -51,6 +49,5 @@ app.get('/download', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export as a serverless function for Vercel
+module.exports = serverless(app);
