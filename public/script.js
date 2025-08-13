@@ -81,7 +81,7 @@ async function downloadVideo() {
 
   async function fetchVideoData(fbUrl) {
     try {
-      const response = await axios.get(`/fbdown?url=${encodeURIComponent(fbUrl)}`);
+      const response = await axios.get(`/api/fbdown?url=${encodeURIComponent(fbUrl)}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching video data:', error);
@@ -94,4 +94,5 @@ async function downloadVideo() {
     if (event.key === 'Enter') {
       document.getElementById('downloadBtn').click();
     }
+
   });
